@@ -1,7 +1,7 @@
-// git test2
+// git test
 // ドキュメントが読み込まれたら次の処理を実行．
 $(function() {
-	
+
 	var map;
 	var urls = ["./data1.xml","./data2.xml"]
 
@@ -14,7 +14,7 @@ $(function() {
 	var latlngArray2 = [];
 
 	// xmlファイルの読み込み
-	$.ajax({ 
+	$.ajax({
 		url: urls[0],
 		type: "GET",
 		dataType:'xml',
@@ -27,7 +27,7 @@ $(function() {
 			// xmlの内容をパース(構文解析．人が書いた仕様に則っていないコードを仕様に合わせて後々使える状態にすること．今回はタグごとに取り出す)する
 			// console.log(res.responseText) //undefined
 			// xml = $.parseXML(res.responseText); //responsTextにリクエストの結果が入っているはず．なんでnullに？？
-			// console.log(xml); 
+			// console.log(xml);
 
 		  	// trkptタグを抽出して配列に埋め込む
  			var trkseg1 = res.getElementsByTagName("trkpt"); // Elements! sがないと，not Functionエラー，
@@ -43,7 +43,7 @@ $(function() {
 	});
 
 	// MarkerをAjaxの外に出し，ajaxはxmlの読み込みのためだけに使うのがポイント．
-	$.ajax({ 
+	$.ajax({
 		url: urls[1],
 		type: "GET",
 		dataType:'xml',
@@ -52,12 +52,12 @@ $(function() {
 		error:function(){
             alert("ロード失敗1");
         },
-		success: function(res) { 
- 			var trkseg1 = res.getElementsByTagName("trkpt");	
+		success: function(res) {
+ 			var trkseg1 = res.getElementsByTagName("trkpt");
 			for(var i = 0; i < trkseg1.length; i++){
 				var lat = parseFloat(trkseg1[i].getAttribute("lat"));
 				var lon = parseFloat(trkseg1[i].getAttribute("lon"));
-				sum_lats += lat; 
+				sum_lats += lat;
 				sum_lons += lon;
 				latlngArray2[i] = [lat,lon];
 			}
@@ -87,22 +87,23 @@ $(function() {
 		var lon2 = latlngArray2[i][1];
 
 		if(lat1 == lat2){
-			var latlng = new google.maps.LatLng(lat1, lon1); 
+			var latlng = new google.maps.LatLng(lat1, lon1);
 			var marker = new google.maps.Marker({map: map, position: latlng, icon:"https://maps.google.com/mapfiles/ms/icons/red-dot.png",zetIndex:10});
 		}else{
-			var latlng = new google.maps.LatLng(lat1, lon1); 
+			var latlng = new google.maps.LatLng(lat1, lon1);
 			var marker = new google.maps.Marker({map: map, position: latlng, icon:"https://maps.google.com/mapfiles/ms/icons/red-dot.png",zetIndex:0});
-			var latlng = new google.maps.LatLng(lat1, lon1); 
+			var latlng = new google.maps.LatLng(lat1, lon1);
 			var marker = new google.maps.Marker({map: map, position: latlng, icon:"https://maps.google.com/mapfiles/ms/icons/blue-dot.png",zetIndex:10});
 		}
 	}
 
 	// // 以下は個別データ．
+
 	// // 青データ(latlangArray2) 赤データを先に記述すると思い通りのプロットにならない..
 	// for(var i = 0; i < latlngArray2.length; i++){
 	// 	var lat = latlngArray2[i][0];
 	// 	var lon = latlngArray2[i][1];
-	// 	var latlng = new google.maps.LatLng(lat, lon); 
+	// 	var latlng = new google.maps.LatLng(lat, lon);
 	// 	var marker = new google.maps.Marker({map: map, position: latlng, icon:"https://maps.google.com/mapfiles/ms/icons/blue-dot.png",zetIndex:0});
 	// }
 
@@ -110,12 +111,9 @@ $(function() {
 	// for(var i = 0; i < latlngArray1.length; i++){
 	// 	var lat = latlngArray1[i][0];
 	// 	var lon = latlngArray1[i][1];
-	// 	var latlng = new google.maps.LatLng(lat, lon); 
+	// 	var latlng = new google.maps.LatLng(lat, lon);
 	// 	var marker = new google.maps.Marker({map: map, position: latlng, icon:"https://maps.google.com/mapfiles/ms/icons/red-dot.png",zetIndex:10});
 	// }
 
 
 });
-
-
-
