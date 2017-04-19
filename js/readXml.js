@@ -146,7 +146,8 @@ function calcDistance(lat1,lng1,lat2,lng2) {
 		}else if (sotoiru>30){
 			var latlng = new google.maps.LatLng(lat1, lon1);
 			var marker = new google.maps.Marker({map: map, position: latlng, icon:"https://maps.google.com/mapfiles/ms/icons/blue-dot.png",zetIndex:10});
-		}
+		alert('JavaScriptのアラート');
+	}
 		else;
 	}
 
