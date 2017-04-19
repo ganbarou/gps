@@ -13,6 +13,22 @@ $(function() {
 	var latlngArray1 = [];
 	var latlngArray2 = [];
 
+function calcDistance(lat1,lng1,lat2,lng2) {
+	var r = 6378.137; // 地球の半径
+	
+	
+
+	// 緯度差と経度差をラジアンに変換
+	var latRad = Math.abs(lat1 - lat2) * Math.PI / 180;
+	var lngRad = Math.abs(lng1 - lng2) * Math.PI / 180;
+
+	// 南北と東西の距離を計算
+	var distNs = r * latRad;
+	var distEw = r * lngRad * Math.cos(lat1 * Math.PI / 180);
+
+	// 2点間の距離を求めてKmで返す
+	return Math.sqrt(Math.pow(distNs, 2) + Math.pow(distEw, 2));
+}
 	// xmlファイルの読み込み
 	$.ajax({
 		url: urls[0],
@@ -50,16 +66,28 @@ $(function() {
 		timeout:1000,
 		async: false,
 		error:function(){
-            alert("ロード失敗1");
+            alert("ロード失敗2");
         },
 		success: function(res) {
+
+			var timeArray = new Array();
+			timeArray[0]=0;
+			
+			var time1= new Array();
+
  			var trkseg1 = res.getElementsByTagName("trkpt");
+ 			var timeArray = res.getElementsByTagName("time");
+ 			
+
 			for(var i = 0; i < trkseg1.length; i++){
 				var lat = parseFloat(trkseg1[i].getAttribute("lat"));
 				var lon = parseFloat(trkseg1[i].getAttribute("lon"));
 				sum_lats += lat;
 				sum_lons += lon;
 				latlngArray2[i] = [lat,lon];
+			
+				time1[i]=timeArray[i].innerHTML;
+				console.log("time="+time1[i]);
 			}
 	 	}
 	});
@@ -72,7 +100,7 @@ $(function() {
 
 	// Google mapのオプションを設定．
 	var mapOptions = {
-		zoom: 14,
+		zoom: 10,
 		center: latlng_center,
 		mapTypeId: google.maps.MapTypeId.ROADMAP
 	};
@@ -80,26 +108,51 @@ $(function() {
 	// div要素内にマップを作成するために，Googleマップオブジェクトを追加，
 	map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
+
+
+	var kyori=[];
+	var ieiru;
+	ieiru=1;
+	var sotoiru;
+	sotoiru=1;
+		//マーカー作成
 	for(var i = 0; i < latlngArray2.length; i++){
 		var lat1 = latlngArray1[i][0];
 		var lon1 = latlngArray1[i][1];
 		var lat2 = latlngArray2[i][0];
 		var lon2 = latlngArray2[i][1];
 
-		if(lat1 == lat2){
+		kyori[i]=calcDistance(lat1,lon1,lat2,lon2);
+	console.log("kyori["+i+"]="+kyori[i]);
+
+	if (kyori[i]<0.03)
+		{ieiru++;
+		sotoiru=0;}
+ 	else
+		{sotoiru++;
+		 ieiru=0;}
+
+
+	console.log("ieiru="+ieiru);
+	console.log("sotoiru="+sotoiru);
+
+
+	
+
+
+		if(ieiru>30){
 			var latlng = new google.maps.LatLng(lat1, lon1);
 			var marker = new google.maps.Marker({map: map, position: latlng, icon:"https://maps.google.com/mapfiles/ms/icons/red-dot.png",zetIndex:10});
-		}else{
-			var latlng = new google.maps.LatLng(lat1, lon1);
-			var marker = new google.maps.Marker({map: map, position: latlng, icon:"https://maps.google.com/mapfiles/ms/icons/red-dot.png",zetIndex:0});
+		}else if (sotoiru>30){
 			var latlng = new google.maps.LatLng(lat1, lon1);
 			var marker = new google.maps.Marker({map: map, position: latlng, icon:"https://maps.google.com/mapfiles/ms/icons/blue-dot.png",zetIndex:10});
 		}
+		else;
 	}
 
 	// // 以下は個別データ．
 
-	// // 青データ(latlangArray2) 赤データを先に記述すると思い通りのプロットにならない..
+	// // 青データ(latlangArray2) 赤データを先に記述すると思い通りのプロットにならない．．．
 	// for(var i = 0; i < latlngArray2.length; i++){
 	// 	var lat = latlngArray2[i][0];
 	// 	var lon = latlngArray2[i][1];
